@@ -73,51 +73,57 @@ The reader watches it once, at 1x, without you there to narrate. Record so that 
 
 ## Host
 
-A file that leaves the machine, for a PR body, an issue or a report, gets a URL. The URL is the evidence.
+`gh` 2.99 or newer attaches a file straight to an issue, a PR, or a comment on either. There is no separate upload step and no URL to carry around by hand. Check once:
 
 ```bash
-url=$("<skill-dir>/scripts/host.sh" <task> "${TMPDIR:-/tmp}/vimulatus/<task>/after.png")
+gh --version
 ```
 
-Anyone who holds the URL reads the file, and a PR body is as public as its repo. Crop to the claim: a full screen carries the tabs, the clock, and whatever else was open. Never a token, a key, or a real customer's data.
-
-GitHub plays a video inline only when GitHub itself hosts the file. A hosted `.webm` renders as a link. So a recording that must render inline becomes a GIF, and the GIF is what you embed:
+Write the body first, against the local files, per Embed below. Then pass each file once, with `--attach`, to the command that creates or edits the issue, the PR, or the comment:
 
 ```bash
-gif=$("<skill-dir>/scripts/gif.sh" "${TMPDIR:-/tmp}/vimulatus/<task>/drag-reorders-the-list.webm")
-url=$("<skill-dir>/scripts/host.sh" <task> "$gif")
+gh pr create --body-file <body.md> \
+  --attach "${TMPDIR:-/tmp}/vimulatus/<task>/after.png" \
+  --attach "${TMPDIR:-/tmp}/vimulatus/<task>/drag-reorders-the-list.webm"
 ```
 
-The script prints the output path, and it exits 1 above 5 MB, the most GitHub's image proxy fetches from an outside host. Over the cap, cut the take shorter or pass a smaller `--width`. Host the `.webm` too, for the reader who wants full quality.
+`gh` uploads each file, finds its path in the body, and rewrites the reference to the uploaded URL. A file the body never mentions lands at the end, in its own paragraph. Write the absolute path in the body and pass the same path to `--attach`.
+
+On an edit, pass `--body-file` with `--attach`. Without it, `gh pr edit` and `gh issue edit` keep the server body and append the file.
+
+Limits: 50 files per command, an image up to 10 MB, a video up to 100 MB, or 10 MB on a free plan. Types: PNG, JPEG, GIF, WebP, SVG, MP4, MOV, WebM.
+
+Anyone who holds the uploaded URL reads the file, and a PR body is as public as its repo. Crop to the claim: a full screen carries the tabs, the clock, and whatever else was open. Never a token, a key, or a real customer's data.
 
 ## Embed
 
-The reader scrolls the PR or the issue once. A shot that renders as a link is a shot the reader never opens. This rule exists because past PR bodies wrote `[Before](<url>) · [After](<url>)` and the media went unseen.
+The reader scrolls the PR or the issue once. A shot that renders as a link is a shot the reader never opens. This rule exists because past PR bodies wrote `[Before](<path>) · [After](<path>)` and the media went unseen.
 
 | The file | Write | Never |
 |---|---|---|
-| a screenshot, a crop, a GIF | `![<the claim>](<url>)` alone in its own paragraph, a blank line above and below. A GIF too wide for the page: `<img src="<url>" width="720" alt="<the claim>">` alone the same way | `[text](<url>)`, an empty `![](<url>)`, or the reference inside a sentence |
-| a recording, `.webm` | the GIF as above, then `[Recording](<url of the .webm>)` on the line below it | the `.webm` URL as the only evidence |
-| a before and after pair | one two-column table, `Before` and `After`, one image per cell | a third column; the cells shrink and the claim disappears |
+| a screenshot, a crop | `![<the claim>](<local path>)` alone in its own paragraph, a blank line above and below | `[text](<local path>)`, an empty `![](<local path>)`, or the reference inside a sentence |
+| a recording, `.webm` or `.mp4` | the claim as the sentence above it, then `![<the claim>](<local path>)` alone in its own paragraph. GitHub plays the uploaded video inline, and the alt text does not survive the upload, so the sentence carries the claim | the reference inside a sentence, or a table cell |
+| a before and after pair | one two-column table, `Before` and `After`, one screenshot per cell | a recording in the table: a table cell is not a paragraph on its own, so `--attach` degrades it to a link instead of a player |
 
 The alt text is the claim, in the words of the PR: `after: the key path prompt refuses a bad key`. A reader who cannot load the image still reads what it showed.
 
 ```markdown
 The prompt refuses a key with a slash.
 
-![after: the prompt refuses a bad key](https://cdn.example.com/evidence/24-key-path/after-refuses-bad-key.png)
+![after: the prompt refuses a bad key](/tmp/vimulatus/24-key-path/after-refuses-bad-key.png)
 
 The drag reorders the list and the order survives a reload.
 
-![drag reorders the list, then a reload keeps the order](https://cdn.example.com/evidence/24-key-path/drag-reorders-the-list.gif)
-[Recording](https://cdn.example.com/evidence/24-key-path/drag-reorders-the-list.webm)
+![drag reorders the list, then a reload keeps the order](/tmp/vimulatus/24-key-path/drag-reorders-the-list.webm)
 ```
 
-Check the body file before you post it. The script prints each media line written in a form that renders as a link, and it exits 1 when there is one:
+Check the body before you attach anything:
 
 ```bash
 "<skill-dir>/scripts/check-embeds.sh" <body.md>
 ```
+
+It passes a local path or an uploaded URL alone in its own paragraph, and a table row of image cells. It fails a link, an empty embed, or a reference inside a sentence, on either side of the attach.
 
 ## Proof
 
@@ -128,5 +134,5 @@ Check the body file before you post it. The script prints each media line writte
 
 - [ ] Every claim names the text or the selector that proved it.
 - [ ] Console and errors are captured, and they are clean.
-- [ ] Every shot a reader needs is hosted and embedded by the Embed table, and it renders on the page.
+- [ ] Every shot a reader needs is attached and embedded by the Embed table, and it renders on the page.
 - [ ] Your session is closed. Every other session still runs. Your server, if you started one, is stopped.
