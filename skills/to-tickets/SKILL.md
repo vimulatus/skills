@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: File one issue, or a parent with a sub-issue per ticket and blocking edges. Use when a bug, a finding, a plan or a spec is ready to file. Not for building it.
+description: File one issue, or a parent with a sub-issue per discipline and blocking edges. Use when a bug, a finding, a plan or a spec is ready to file. Not for building it.
 ---
 
 # To tickets
@@ -14,12 +14,12 @@ one issue      a bug, a chore, a finding        -> §1, §2, §5
 a parent       a plan or a spec with tickets    -> §1 to §6
 
 parent #12  Feedback capture
-  |-- #13  POST /feedback            no blockers
-  |-- #14  the feedback form         blocked by #13
-  \-- #15  email the feedback out    blocked by #13
+  |-- #13  design    the feedback form          no blockers
+  |-- #14  backend   POST /feedback             no blockers
+  \-- #15  frontend  the feedback form          blocked by #13, #14
 ```
 
-A **ticket** is one sub-issue: a narrow, complete path through every layer, demoable on its own, sized for one context window.
+The team has a designer, a frontend developer and a backend developer. A **ticket** is one sub-issue: one discipline's part of a slice, owned by one person, landing as one PR or one design handoff. Every ticket is `design`, `frontend` or `backend`.
 
 ## Before you start
 
@@ -41,12 +41,22 @@ For a plan, look for the **prefactor**: the change that makes the change easy. I
 
 ## 3 — Cut the tickets
 
-- Each ticket cuts a narrow but complete path through every layer: schema, API, UI, tests. Never one layer.
-- A finished ticket is demoable or verifiable on its own.
-- Each ticket fits one fresh context window.
+`wayfinder` cut the slice: one vertical path a user can use. Cut the slice by discipline, never again by feature.
+
+- One ticket per discipline the slice touches. A discipline the slice does not touch gets no ticket: a slice with no screen has no `design` ticket, a visual change with no new data has no `backend` ticket.
+- A ticket is done when its owner can hand it over: a green PR, or frames the frontend developer can build from.
+- The **seam** between two tickets goes into both bodies, so neither owner waits for a conversation: the API shape between `backend` and `frontend`, the screens and states between `design` and `frontend`.
 - The prefactor goes first.
 
-Give each ticket its **blocking edges**: the work it depends on. Code dependencies can support stacked development once their open PRs are usable; `issue-queue` owns readiness and branch selection. Other prerequisites must be satisfied before execution. A ticket with no blockers can start now.
+The edges follow from the seams:
+
+| Ticket | Blocked by | Because |
+|---|---|---|
+| `design` | nothing | it starts from the job and the map |
+| `backend` | nothing | it sets the contract |
+| `frontend` | `design`, `backend` | it builds the frames against the contract |
+
+A `design` ticket must close before `frontend` starts: a person owns it, and no PR carries it. A `backend` ticket is a code dependency: `frontend` can stack on its open PR once the contract is usable. `issue-queue` owns readiness and branch selection. A ticket that needs a ticket from an earlier slice names it too. A ticket with no blockers can start now.
 
 **A wide refactor is the exception.** One mechanical change whose blast radius fans across the codebase, so no ticket lands green alone. Sequence it as **expand-contract**:
 
@@ -58,23 +68,26 @@ Give each ticket its **blocking edges**: the work it depends on. Code dependenci
 
 ## 4 — One round
 
-Show the tickets as a numbered list: title, what it delivers, what blocks it. Under it, the calls you made and would take a correction on: the granularity, an edge, a merge or a split. One round, recommended answers, the user answers by exception. `grilling` owns the form.
+Show the tickets as a numbered list: discipline, title, what it delivers, what blocks it. Under it, the calls you made and would take a correction on: the granularity, a seam, an edge, a merge or a split. One round, recommended answers, the user answers by exception. `grilling` owns the form.
 
 Record reversible planning assumptions in the parent. If a load-bearing decision is unanswered, mark affected tickets blocked for execution and name the decision; continue filing independent work. Do not seek another confirmation for decisions already settled.
 
 ## 5 — File
 
-Read the project's labels first. A project that labels by area or by kind gets its labels. No convention, no label.
+Every ticket carries exactly one discipline label: `design`, `frontend` or `backend`. So does a lone issue; a bug that spans two disciplines is two issues. The parent and the map carry no discipline label. Create a label the project lacks.
 
 ```bash
 gh label list --limit 60 --json name --jq '.[].name'
+gh label create design --description "Owned by the designer"
 ```
+
+A project that also labels by area or by kind gets those labels too. No convention, no second label.
 
 The parent first, so each ticket can name it. Then the tickets, blockers first.
 
 ```bash
 p=$(gh issue create --title "<title>" --body-file <parent.md>); p=${p##*/}
-c=$(gh issue create --title "<title>" --body-file <ticket.md>); c=${c##*/}
+c=$(gh issue create --title "<title>" --label <discipline> --body-file <ticket.md>); c=${c##*/}
 
 "<skill-dir>/scripts/link.sh" sub   "$p" "$c"    # $c is a sub-issue of $p
 "<skill-dir>/scripts/link.sh" block "$c" "$b"    # $c is blocked by $b
@@ -88,7 +101,7 @@ A parent closes when its last ticket closes. GitHub does not do that. The `pr` s
 
 | Does someone have to build something? | Where it goes |
 |---|---|
-| Yes | a new sub-issue of the parent, with its blocking edges. File it by §5, then add it to the parent's list. |
+| Yes | a new sub-issue of the parent, in its discipline, with its blocking edges. File it by §5, then add it to the parent's list. |
 | No | a comment on the parent. |
 
 A decision, a constraint, a dead end: comment. A behaviour someone must change: sub-issue.
@@ -97,7 +110,9 @@ Never edit a ticket someone is already building. Never close the parent early.
 
 ## Bodies
 
-Current behaviour, then expected behaviour. Plain words for a reader who was not in the room. A subtle behaviour gets a worked example with real values. Evidence only from an investigation that already happened: the snippet and the file path.
+Plain words for a reader who was not in the room. A subtle behaviour gets a worked example with real values. Evidence only from an investigation that already happened: the snippet and the file path.
+
+A `frontend` or `backend` body reads current behaviour, then expected behaviour. A `design` body reads the user's job, then the screens and states: the designer reads it, not the code.
 
 A screenshot or a recording in a body follows the Embed table in `browser-evidence`: `![the claim](<local path>)` alone in its paragraph, then `--attach <path>` on the `gh issue create` or `gh issue edit` that files it, so it renders inline instead of as a link.
 
@@ -113,8 +128,9 @@ What should happen instead, from the user's perspective.
 
 ## Tickets
 
-- #13 <title>
-- #14 <title>
+- #13 design — <title>
+- #14 backend — <title>
+- #15 frontend — <title>
 
 </parent-template>
 
@@ -130,7 +146,11 @@ What happens today. Include short evidence from an investigation already complet
 
 ## Expected behaviour
 
-The end-to-end behaviour this ticket makes work, from the user's perspective.
+The behaviour this ticket makes work, from the user's perspective.
+
+## Seam
+
+What this ticket hands over or takes from the other disciplines: the API shape by route and field, the screens by design ticket. Omit when the ticket has no seam.
 
 ## Acceptance criteria
 
@@ -138,5 +158,38 @@ The end-to-end behaviour this ticket makes work, from the user's perspective.
 - [ ] Criterion 2
 
 </ticket-template>
+
+<design-ticket-template>
+
+**Parent:** #<parent>
+
+**Blocked by:** #<n> - or "None. Can start now."
+
+## The job
+
+Who the user is, and what they come to this screen to do. One or two lines, from the map's destination.
+
+## Today
+
+What the user sees now, and where it fails them. A screenshot when the screen exists.
+
+## Screens and states
+
+One line per screen. Under it, the states the frames must cover: discovery, action, waiting, completion, failure and recovery. Name the state a screen does not have.
+
+## Constraints
+
+- the design system: `DESIGN.md`, or the existing screens this one sits beside
+- the data the `backend` ticket exposes, by field name
+- the widths: 375 and 1280
+
+## Acceptance criteria
+
+- [ ] every screen and state above has a frame
+- [ ] the frames use the design system's tokens and components
+- [ ] the frontend developer has read the frames and can build from them
+- [ ] a comment on this issue links the frames
+
+</design-ticket-template>
 
 Use short snippets and file paths as evidence of observed current behaviour, not as a prescribed implementation plan. A prototype-derived state machine, schema or type may carry a decision better than prose; inline only that shape and name its source.

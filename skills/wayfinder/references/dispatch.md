@@ -12,6 +12,7 @@ Before you hand off, the tickets that are not code:
 
 | The ticket needs | Reach for |
 |---|---|
+| the designer | nothing. A `design` ticket is a person's; the queue skips it, and its `frontend` ticket waits until it closes |
 | an external fact | `research`, in the background |
 | The user's taste, or a domain rule | `grilling` |
 | to be seen before it is decided | `prototype` |

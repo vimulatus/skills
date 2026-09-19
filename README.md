@@ -1,6 +1,6 @@
 # Skills
 
-Agent skills for Claude Code and Codex. Each directory under `skills/` is one skill, and its `SKILL.md` says when it fires.
+Agent skills for Claude Code and Codex, for a team with a designer, a frontend developer and a backend developer. Each directory under `skills/` is one skill, and its `SKILL.md` says when it fires.
 
 ## Install
 
@@ -16,7 +16,7 @@ Omit `-g` for a project install. Or copy `skills/<skill>` into `.claude/skills/`
 
 1.1. **Grilling** - Follows the rubber-duck principle, and interviews me to clarify my doubts. I have optimised it a lot, so that it asks only load bearing questions.
 
-1.2. **Wayfinder** - Helps me plan out work by breaking it into vertical slices I can release one at a time, then files a ticket for every slice.
+1.2. **Wayfinder** - Helps me plan out work by breaking it into vertical slices I can release one at a time, then files a ticket per discipline for every slice.
 
 1.3. **SLC** - Shapes a release as simple, lovable and complete, after Jason Cohen's essay. It picks the destination of a release and judges every cut against it.
 
@@ -24,7 +24,7 @@ Omit `-g` for a project install. Or copy `skills/<skill>` into `.claude/skills/`
 
 1.5. **Product context** - Writes the Product and Ship sections of a project's rule file: who it is for, the stage, what not to build, and how to run, gate and ship it.
 
-1.6. **To tickets** - Files one issue, or a parent with a sub-issue per ticket and the blocking edges between them. It files, it never builds.
+1.6. **To tickets** - Files one issue, or a parent with a `design`, `frontend` and `backend` sub-issue and the blocking edges between them. A design ticket reads as the user's job and the screens to cover. It files, it never builds.
 
 ### 2. Orchestration
 
@@ -82,4 +82,4 @@ Omit `-g` for a project install. Or copy `skills/<skill>` into `.claude/skills/`
 
 ## Source
 
-These files are promoted from [vimulatus/agentic](https://github.com/vimulatus/agentic). Each promote overwrites the copy here, so send changes there.
+These skills forked from [vimulatus/agentic](https://github.com/vimulatus/agentic) on 2026-09-19. Agentic holds my personal workflow; this repo holds the team's. A change for the team lands here. A promote from agentic overwrites it, so do not promote.
