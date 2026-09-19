@@ -49,7 +49,7 @@ Then run `queue-list.sh` once and read every body with `gh issue view <n>`. Each
 | Lane | The issue |
 |---|---|
 | **Ready** | names the current behaviour, the wanted behaviour, and the surface it touches |
-| **Skip** | needs a call only the user can make, duplicates another issue, or names no observable change |
+| **Skip** | carries the `design` label, needs a call only the user can make, duplicates another issue, or names no observable change |
 
 Report the Skip lane, one line each with the reason. Then start the Ready lane on your own.
 
@@ -61,7 +61,7 @@ An issue depends on another when it needs that issue's code, or edits the same f
 - Independent issues run smallest first.
 - Two issues that edit the same lines are one issue. Merge them in the queue and say you did.
 
-The **frontier** is every Ready issue whose code dependencies are merged or available in usable open PRs. Start on the dependency PR branch when its code is still unmerged. A dependency that requires a settled product decision or a live deployment remains blocked until that condition is met. Step 4 runs the frontier.
+The **frontier** is every Ready issue whose code dependencies are merged or available in usable open PRs, and whose `design` blockers are closed. Start on the dependency PR branch when its code is still unmerged. A dependency that requires a settled product decision or a live deployment remains blocked until that condition is met. Step 4 runs the frontier.
 
 ## 3 — Pick the base branch
 
