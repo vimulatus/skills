@@ -14,12 +14,13 @@ one issue      a bug, a chore, a finding        -> §1, §2, §5
 a parent       a plan or a spec with tickets    -> §1 to §6
 
 parent #12  Feedback capture
-  |-- #13  POST /feedback            no blockers
-  |-- #14  the feedback form         blocked by #13
-  \-- #15  email the feedback out    blocked by #13
+  |-- #13  Grilling  the feedback data model       no blockers
+  |-- #14  Design    prototype the feedback form   no blockers
+  |-- #15  Backend   POST /feedback                blocked by #13
+  \-- #16  Frontend  wire the feedback form        blocked by #14, #15
 ```
 
-A **ticket** is one sub-issue: a narrow, complete path through every layer, demoable on its own, sized for one context window.
+A slice runs from the backend to the screen, design included. No one person owns a slice. A **ticket** is one sub-issue of one kind - Backend, Frontend, Design or Grilling - so one person can take it: verifiable on its own and sized for one context window. The decisions a person must make live in the tickets, not in a session.
 
 ## Before you start
 
@@ -41,12 +42,20 @@ For a plan, look for the **prefactor**: the change that makes the change easy. I
 
 ## 3 — Cut the tickets
 
-- Each ticket cuts a narrow but complete path through every layer: schema, API, UI, tests. Never one layer.
-- A finished ticket is demoable or verifiable on its own.
+Every ticket is one kind. A ticket that spans two kinds is two tickets.
+
+| Kind | It delivers | Verified by |
+|---|---|---|
+| Backend | everything below the screen: schema, API, jobs, CI, and the tests that prove them | its tests, and a call against the endpoint |
+| Frontend | the screen, wired to the API it consumes | the screen working in the running app |
+| Design | a prototype of the screen: 3 to 5 variants, layout and states, and the pick | the picked variant and its URL, in the closing comment |
+| Grilling | the slice's load-bearing decisions, one per slice, each with a recommended answer | an answer per decision in the comments; closes on the last |
+
+- Each ticket is complete within its kind.
 - Each ticket fits one fresh context window.
 - The prefactor goes first.
 
-Give each ticket its **blocking edges**: the work it depends on. Code dependencies can support stacked development once their open PRs are usable; `issue-queue` owns readiness and branch selection. Other prerequisites must be satisfied before execution. A ticket with no blockers can start now.
+Give each ticket its **blocking edges**: the work it depends on. The kinds carry the default edges: Grilling blocks every ticket that needs one of its answers, Design blocks Frontend, and Backend blocks Frontend. Design and Backend have no edge between them. Drop an edge the work does not need: a Frontend ticket against a settled design and a live endpoint starts now. Code dependencies can support stacked development once their open PRs are usable; `issue-queue` owns readiness and branch selection. Other prerequisites must be satisfied before execution. A ticket with no blockers can start now.
 
 **A wide refactor is the exception.** One mechanical change whose blast radius fans across the codebase, so no ticket lands green alone. Sequence it as **expand-contract**:
 
@@ -56,21 +65,29 @@ Give each ticket its **blocking edges**: the work it depends on. Code dependenci
 | Migrate | Move the call sites in batches: per package, per directory. One ticket per batch. | Expand |
 | Contract | Delete the old form once no caller remains. | every Migrate batch |
 
-## 4 — One round
+## 4 — Decisions
 
-Show the tickets as a numbered list: title, what it delivers, what blocks it. Under it, the calls you made and would take a correction on: the granularity, an edge, a merge or a split. One round, recommended answers, the user answers by exception. `grilling` owns the form.
+Apply the load-bearing filter from `grilling`: what a person must decide goes into a ticket, the rest you settle. There is no round in the session. The assignee answers in the ticket, by exception, so every open decision carries your recommended answer.
 
-Record reversible planning assumptions in the parent. If a load-bearing decision is unanswered, mark affected tickets blocked for execution and name the decision; continue filing independent work. Do not seek another confirmation for decisions already settled.
+| The decision | Home |
+|---|---|
+| shapes more than one ticket: the data model, the contract, a one-way door | the slice's Grilling ticket, filed first |
+| shapes one ticket | that ticket's `## Open decisions` section |
+| how a new screen looks and moves | the Design ticket; its blocking edge holds each Frontend ticket |
+
+A ticket files now even when a decision it needs is open. Its blocking edge and its open decisions hold it, on GitHub, where the team can see it. A held ticket hides work.
+
+Record reversible planning assumptions in the parent: the granularity, an edge, a merge or a split. A reader corrects them on the parent. Do not reopen a decision the map already answers.
 
 ## 5 — File
 
-Read the project's labels first. A project that labels by area or by kind gets its labels. No convention, no label.
+Read the project's labels first. A project that labels by area or by kind gets its labels: a project carrying `backend`, `frontend` or `design` labels gets the ticket's kind. No convention, no label.
 
 ```bash
 gh label list --limit 60 --json name --jq '.[].name'
 ```
 
-The parent first, so each ticket can name it. Then the tickets, blockers first.
+The parent first, so each ticket can name it. Then the tickets, blockers first. Assign a ticket, or a whole slice through its parent, when the user names who takes it: `--assignee <login>`. Otherwise leave it unassigned.
 
 ```bash
 p=$(gh issue create --title "<title>" --body-file <parent.md>); p=${p##*/}
@@ -88,7 +105,7 @@ A parent closes when its last ticket closes. GitHub does not do that. The `pr` s
 
 | Does someone have to build something? | Where it goes |
 |---|---|
-| Yes | a new sub-issue of the parent, with its blocking edges. File it by §5, then add it to the parent's list. |
+| Yes | a new sub-issue of the parent, with its kind and its blocking edges. File it by §5, then add it to the parent's list. |
 | No | a comment on the parent. |
 
 A decision, a constraint, a dead end: comment. A behaviour someone must change: sub-issue.
@@ -99,7 +116,7 @@ Never edit a ticket someone is already building. Never close the parent early.
 
 Current behaviour, then expected behaviour. Plain words for a reader who was not in the room. A subtle behaviour gets a worked example with real values. Evidence only from an investigation that already happened: the snippet and the file path.
 
-A screenshot or a recording in a body follows the Embed table in `browser-evidence`: `![the claim](<local path>)` alone in its paragraph, then `--attach <path>` on the `gh issue create` or `gh issue edit` that files it, so it renders inline instead of as a link.
+A screenshot or a recording in a body follows the Embed table in `browser-evidence`: hosted, and `![the claim](<url>)` alone in its paragraph, so it renders inline instead of as a link.
 
 <parent-template>
 
@@ -122,6 +139,8 @@ What should happen instead, from the user's perspective.
 
 **Parent:** #<parent>
 
+**Kind:** Backend | Frontend | Design | Grilling
+
 **Blocked by:** #<n>, #<n> - or "None. Can start now."
 
 ## Current behaviour
@@ -130,7 +149,13 @@ What happens today. Include short evidence from an investigation already complet
 
 ## Expected behaviour
 
-The end-to-end behaviour this ticket makes work, from the user's perspective.
+What this ticket makes work, in the terms its kind is verified by: the user's perspective for Frontend, the contract it exposes for Backend, the variants and the pick for Design, the answers for Grilling.
+
+## Open decisions
+
+- <question> — recommended: <answer>
+
+Or "None." The assignee answers each one in a comment before building. A Grilling ticket is this section alone, without the sections around it.
 
 ## Acceptance criteria
 
