@@ -83,3 +83,7 @@ Omit `-g` for a project install. Or copy `skills/<skill>` into `.claude/skills/`
 ## Source
 
 These files are promoted from [vimulatus/agentic](https://github.com/vimulatus/agentic). Each promote overwrites the copy here, so send changes there.
+
+Run `sh scripts/promote.sh` to copy them over, one commit per skill. `-n` prints the plan and stops.
+
+A skill written for one person's setup stays out: put its name in `.skillsignore`, one per line, and promote skips it. A name added after the skill went out removes it here too, and warns you to cut its entry from the list above.
