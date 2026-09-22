@@ -8,7 +8,7 @@ argument-hint: "[--workers <n>] [--map <n>]"
 
 You hold the queue. The development worker holds the code.
 
-Before starting watches or workers, read the current client’s execution reference: [Claude Code](../orchestrate/references/claude.md) or [Codex](../orchestrate/references/codex.md). Read only that reference; use its development role and lifecycle.
+Before starting watches or workers, read the current client’s execution reference: [Claude Code](../../engineering/orchestrate/references/claude.md) or [Codex](../../engineering/orchestrate/references/codex.md). Read only that reference; use its development role and lifecycle.
 
 Resolve `<skill-dir>` below to the absolute directory containing this issue-queue `SKILL.md`; substitute the path before running commands.
 
@@ -49,7 +49,7 @@ Then run `queue-list.sh` once and read every body with `gh issue view <n>`. Each
 | Lane | The issue |
 |---|---|
 | **Ready** | names the current behaviour, the wanted behaviour, and the surface it touches |
-| **Skip** | needs a call only the user can make, duplicates another issue, or names no observable change |
+| **Skip** | carries an `## Open decisions` item with no answer in the comments, duplicates another issue, or names no observable change |
 
 Report the Skip lane, one line each with the reason. Then start the Ready lane on your own.
 
@@ -78,7 +78,7 @@ Reach for the stack. A branch cut from trunk that later needs an open PR's code 
 
 ## 4 — Run the frontier
 
-`orchestrate` runs it, and `dev` is the worker. With no `--workers`, `orchestrate` sizes the fleet from the machine and moves it as the load moves. `--workers <n>` caps that climb. When a `dev` returns, prepare its PR (step 5), then recompute the frontier. Opening or preparing a PR does not mean it has merged.
+`orchestrate` runs it, and `dev` is the worker. With no `--workers`, `orchestrate` sizes the fleet from the machine and moves it as the load moves. `--workers <n>` caps that climb. When a `dev` returns, prepare its PR (step 5), then recompute the frontier. Re-read the Skip lane as you do, and every 10 minutes while the frontier is empty: a ticket whose open decisions now have answers moves to Ready. The watch fires on new issue numbers only, never on a comment. Opening or preparing a PR does not mean it has merged.
 
 Two frontier issues that turn out to touch the same function: hold the second until the first merges. Step 2 should have merged them.
 
