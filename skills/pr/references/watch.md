@@ -81,16 +81,14 @@ A resolved thread tells the reviewer "handled", so a false one costs them a seco
 
 A screenshot proves the diff that was there when you took it. Every push moves the diff.
 
-After a push that changes what a user sees, retake the shot and swap it in place.
+After a push that changes what a user sees, retake the shot and swap the URL in the body.
 
 ```bash
 # browser-evidence writes the new shot, then:
-"<skill-dir>/scripts/refresh-shot.sh" <N> "${TMPDIR:-/tmp}/vimulatus/<task>/after.png" "<the alt text already in the body>"
+"<skill-dir>/scripts/refresh-shot.sh" <N> <task> "${TMPDIR:-/tmp}/vimulatus/<task>/after.png"
 ```
 
-It finds the image with that alt text in the body, puts the new file where the old URL was, and attaches it. The old URL keeps working; the body now points at the new one.
-
-A stale recording has no alt text to find by: `--attach` drops it from the body when the video first went in. Retake it, then edit the body by hand: replace the old asset URL, alone in its paragraph, with the new file's absolute path, and run `gh pr edit <N> --body-file <body> --attach <file>`.
+It uploads under the current sha and swaps the URL. The old URL keeps working.
 
 Text-only pushes need none of this.
 

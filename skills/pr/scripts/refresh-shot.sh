@@ -1,24 +1,22 @@
 #!/bin/sh
-# Swap a stale screenshot for a fresh one, keeping its place in the PR body.
-#   refresh-shot.sh <pr> <file> "<alt text>"
-# The old URL is opaque and carries no reference to the file, so the alt text
-# is the anchor: find `![<alt text>](url)` in the body, put the local file
-# back in its place, and let `--attach` upload and rewrite it.
+# Re-upload a screenshot under the current sha and swap its URL in the PR body.
+#   refresh-shot.sh <pr> <task> <file> [sha]
+# The old URL keeps working, so a reviewer part way through the body keeps the picture.
 set -eu
-pr=${1:?usage: refresh-shot.sh <pr> <file> "<alt text>"}
-file=${2:?path to the new shot}
-alt=${3:?the alt text already in the body, exactly as written}
+pr=${1:?usage: refresh-shot.sh <pr> <task> <file> [sha]}
+task=${2:?task slug}
+file=${3:?path to the new shot}
+sha=${4:-$(git rev-parse --short HEAD)}
 
-esc_grep=$(printf '%s' "$alt" | sed -e 's/[.[\*^$]/\\&/g')
-esc_sed=$(printf '%s' "$alt" | sed -e 's/[.[\*^$&/\]/\\&/g')
+base=$(basename "$file"); stem=${base%.*}; ext=${base##*.}
+url=$(fs put "$file" --bucket evidence --key "$task/$stem-$sha.$ext")
 
 body=$(mktemp)
 gh pr view "$pr" --json body --jq .body > "$body"
-if ! grep -qE "!\[$esc_grep\]\([^)]+\)" "$body"; then
-  echo "no ![$alt](...) in the body of #$pr. Attach $file and write the reference yourself." >&2
+if ! grep -qE "https://[^ )\"]*/$task/$stem[^ )\"]*\.$ext" "$body"; then
+  echo "no $task/$stem.$ext URL in the body of #$pr. Uploaded to $url — embed it yourself." >&2
   exit 1
 fi
-sed -E -i.bak "s#!\[$esc_sed\]\([^)]+\)#![$esc_sed]($(printf '%s' "$file" | sed -e 's/[&/\]/\\&/g'))#" "$body"
-gh pr edit "$pr" --body-file "$body" --attach "$file"
-
-gh pr view "$pr" --json body --jq .body | grep -oE "!\[$esc_grep\]\([^)]+\)"
+sed -E -i.bak "s#https://[^ )\"]*/$task/$stem[^ )\"]*\.$ext#$url#g" "$body"
+gh pr edit "$pr" --body-file "$body"
+echo "$url"
