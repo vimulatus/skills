@@ -16,4 +16,4 @@ Read the source at the version in use. The `coding` skill carries the clone comm
 
 ## Report
 
-Read the current client’s execution reference: [Claude Code](../orchestrate/references/claude.md) or [Codex](../orchestrate/references/codex.md), and use its researcher role. Read only that client reference. Delegate when research can run alongside useful local work; otherwise perform the role’s task locally. The brief is the question and where the answer will be used. It returns the report path, the answer and unresolved questions. Read the file before you build on it.
+Read the current client’s execution reference: [Claude Code](../../engineering/orchestrate/references/claude.md) or [Codex](../../engineering/orchestrate/references/codex.md), and use its researcher role. Read only that client reference. Delegate when research can run alongside useful local work; otherwise perform the role’s task locally. The brief is the question and where the answer will be used. It returns the report path, the answer and unresolved questions. Read the file before you build on it.

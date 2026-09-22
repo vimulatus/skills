@@ -19,9 +19,10 @@ A decision is load-bearing when a wrong answer is expensive to undo, or when onl
 | The data model, the contract, who owns what | The library, the file layout, the naming |
 | A one-way door: a migration, a vendor, a public API | Anything a later diff can change |
 | A trade-off the user prices: cost, scope, who gets cut | An edge case with a safe default |
+| How a new screen looks and moves, shown as a `prototype` he can flip through | The component, the token, the library, and every screen `DESIGN.md` already settles |
 | Where the plan contradicts itself, or the product | A gap a reasonable assumption closes |
 
-The user may not hold the tech stack. A question they would answer with "you decide" was never load-bearing.
+The user does not hold the tech stack, and does not want to. A question he would answer with "you decide" was never load-bearing.
 
 The filter cuts the volume, not the depth. Grill hard on what passes it: push back, take the other side, find the contradiction.
 
