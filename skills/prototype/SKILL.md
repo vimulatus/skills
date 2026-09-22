@@ -64,6 +64,7 @@ Several **radically different** takes on one route, fast to flip between.
 - 3 to 5 variants. Different structure, not different colors. If two swap in your head, one is wasted.
 - `?v=<n>` is the share link. The arrows wrap. The arrow keys work.
 - Same fake data in every variant.
+- For a design direction, each variant is a canvas of every screen the map needs, so one pick settles the whole product.
 
 ## Skip the polish
 
@@ -75,4 +76,4 @@ Several **radically different** takes on one route, fast to flip between.
 
 Use taste's basic responsive and keyboard floor. Exercise the interactions and simulated states this prototype demonstrates; report its limitations.
 
-Deliver it through `handout`'s applicable delivery reference and give the resulting URL or file link. On the user's own machine, open the file as well. Never a TUI, never a hosted planning tool: one HTML file they can open.
+Deliver it through `handout`'s applicable delivery reference and give the resulting URL or file link. On the user's own machine, open the file as well. Never a TUI, never a hosted planning tool: one HTML file he can open.
