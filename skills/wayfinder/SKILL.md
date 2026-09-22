@@ -5,7 +5,7 @@ description: Cut "build X" into releasable slices, then ticket every slice. Use 
 
 # Wayfinder
 
-You produce the tickets for the whole map. You never write the code.
+You produce the tickets for the whole map. You never write the code, and you never decide for the team: a decision a person must make goes into a ticket, with your recommended answer, for the person assigned to it.
 
 For product work, load [slc](../slc/SKILL.md) before cutting scope. Its brief's Destination, Reason to prefer, Acceptance checks and Out of scope go into the map. Routine infrastructure work keeps its existing slicing rules.
 
@@ -29,10 +29,12 @@ The map is the one open issue labelled `map`. Its state names the level.
 | a slice has no parent issue | L2 wayfind | `references/wayfind.md`, to take that slice to its tickets |
 | every slice has a parent issue | L3 dispatch | `references/dispatch.md`, to hand the map to the queue |
 
-The user says "from scratch": close the old map and its open tickets, then cut a new one at L1. Never amend a map they have rejected.
+The user says "from scratch": close the old map and its open tickets, then cut a new one at L1. Never amend a map he has rejected.
 
 ## Walk the map
 
-Slices go to ticket depth one at a time, in map order. A slice's decisions land in the map before the next slice opens, so the next slice grills on them and not on guesses.
+Slices go to ticket depth one at a time, in map order. A slice's decisions land in its tickets and the map before the next slice opens, so the next slice builds on them and not on guesses.
 
-Done looks like: every slice in the map carries its parent issue number, and every parent has its tickets. Then hand off, L3.
+An open decision blocks only the tickets that need its answer. The map, and the queue, move on without them.
+
+Done looks like: every slice in the map carries its parent issue number, and every parent has its tickets, with their open decisions inside them. Then hand off, L3.

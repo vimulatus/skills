@@ -8,12 +8,8 @@ issue-queue --map <map#>
 
 `issue-queue` runs the tickets in slice order, through `orchestrate` and `dev`, and babysits the PRs. That is the long run the user lets loose. It is not this skill's.
 
-Before you hand off, the tickets that are not code:
+Hand off with the open decisions still open. They live in the tickets, with the people assigned to them: the Grilling ticket, the Design ticket, and any ticket's `## Open decisions`. The queue skips a ticket until its decisions have answers, and takes it when they do.
 
-| The ticket needs | Reach for |
-|---|---|
-| an external fact | `research`, in the background |
-| The user's taste, or a domain rule | `grilling` |
-| to be seen before it is decided | `prototype` |
+An external fact is yours, not a person's: `research`, in the background, and its answer in a comment on the ticket that needs it.
 
-Close such a ticket with its answer in a comment, and add the decision to the map. When a decision overturns a later slice's tickets, rewrite those tickets before the queue reaches them.
+When an answer overturns a later slice's tickets, rewrite those tickets before the queue reaches them.

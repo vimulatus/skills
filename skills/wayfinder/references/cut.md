@@ -59,11 +59,11 @@ A slice gains ` — #<parent>` when its tickets are filed.
 
 ## Ideas
 
-Everything the user said they might build. Unordered, one line each. An idea becomes a slice only when the user promotes it.
+Everything the user said he might build. Unordered, one line each. An idea becomes a slice only when the user promotes it.
 
 ## Decisions
 
-One line per answered question, with its answer.
+One line per answered question, with its answer. A reversible guess starts `assumed:`. An unanswered question starts `open:`, carries the recommended answer, and names the ticket that carries it.
 
 ## Out of scope
 
