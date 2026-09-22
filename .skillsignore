@@ -1,0 +1,7 @@
+# Skills that stay in vimulatus/agentic and never reach this repo.
+# One name per line. A shell glob matches a group. `#` starts a comment.
+# `promote.sh` skips a listed skill, and removes it here if it was published before.
+#
+#   status
+#   handoff
+#   teach
